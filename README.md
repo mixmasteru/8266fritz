@@ -2,7 +2,7 @@
 Up- Downstream hardware monitor for a FRITZ!box
 
 It's possible to use a SOAP API on the FRITZ!box to get data about your internet connection.
-You can get the use of up and downstream in bytes.
+E.g. you can query the up and downstream in bytes.
 
 To test this soap call you can use a curl request:
 ```

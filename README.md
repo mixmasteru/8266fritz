@@ -8,7 +8,7 @@ To test this soap call you can use a curl request:
 ```
 curl -s "http://fritz.box:49000/igdupnp/control/WANCommonIFC1" -H "Content-Type: text/xml; charset="utf-8"" -H "SoapAction:urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos" -d "@linkspeed.xml"
 ```
-Txhis does a soap POST:
+This does a SOAP POST:
 ```
 *   Trying 192.168.178.1...
 * Connected to fritz.box (192.168.178.1) port 49000 (#0)

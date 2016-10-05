@@ -1,14 +1,15 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-
-const char* ssid     = "WLAN";
-const char* password = "1234567890";
+#include <config.h>
 
 IPAddress host(192,168,178,1);
 const int httpPort = 49000;
 
-#define LED D0 // Led in NodeMCU at pin GPIO16 (D0).
+struct sr {
+  int sent;
+  int receive;
+};
 
 String getSoapXML(){
   String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
@@ -32,19 +33,30 @@ String getSoapHeader(String url, String host, String soapaction, String clength)
   return header;
 }
 
+sr parseData(String xml){
+  String sent     = xml.substring(xml.indexOf("<NewByteSendRate>")+17,xml.indexOf("</NewByteSendRate>"));
+  String receive  = xml.substring(xml.indexOf("<NewByteReceiveRate>")+20,xml.indexOf("</NewByteReceiveRate>"));
+  Serial.println(sent);
+  Serial.println(receive);
+
+  sr parsed = {sent.toInt(),receive.toInt()};
+  return parsed;
+}
+
 void getFritzData(){
   WiFiClient client;
   if (client.connect(host, httpPort)) {
 
     String soapaction = "SoapAction:urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
-    String url  = "/igdupnp/control/WANCommonIFC1";
-    String host = "192.168.178.1:49000";
-    String body = getSoapXML();
-    String length = String(body.length());
-    String header = getSoapHeader(url, host, soapaction, length);
+    String url      = "/igdupnp/control/WANCommonIFC1";
+    String hostport = host.toString() + ":" + String(httpPort);
+    String body     = getSoapXML();
+    String length   = String(body.length());
+    String header   = getSoapHeader(url, hostport, soapaction, length);
+
 
     Serial.print("Requesting URI: ");
-    Serial.println(host+url);
+    Serial.println(hostport+url);
     Serial.println("length: "+length);
 
     client.print(header+body);
@@ -66,6 +78,7 @@ void getFritzData(){
     }
 
     Serial.println(lines);
+    parseData(lines);
   }
   else{
     Serial.println("no connection to fritzbox");
@@ -76,7 +89,7 @@ void setup(void){
   pinMode(LED, OUTPUT);
   //digitalWrite(led, 0);
   Serial.begin(115200);
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PWD);
   Serial.println("");
 
   // Wait for connection
@@ -86,7 +99,7 @@ void setup(void){
   }
   Serial.println("");
   Serial.print("Connected to ");
-  Serial.println(ssid);
+  Serial.println(SSID);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }

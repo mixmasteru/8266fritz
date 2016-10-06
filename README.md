@@ -28,4 +28,6 @@ This does a SOAP POST:
 < CONTENT-LENGTH: 991
 < CONTENT-TYPE: text/xml; charset="utf-8"
 < EXT:
-´´´
+```
+
+We can use this data to drive an analog [vu-meter](https://en.wikipedia.org/wiki/VU_meter) via the pulse-width modulation (PWM) on a analog GPIO on the ESP8266. The meter only needs a small voltage.

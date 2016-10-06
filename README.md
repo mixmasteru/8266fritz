@@ -30,4 +30,4 @@ This does a SOAP POST:
 < EXT:
 ```
 
-We can use this data to drive an analog [vu-meter](https://en.wikipedia.org/wiki/VU_meter) via the pulse-width modulation (PWM) on a analog GPIO on the ESP8266. The meter only needs a small voltage.
+We can use this data to drive an analog [vu-meter](https://en.wikipedia.org/wiki/VU_meter) via the pulse-width modulation (PWM) on a analog ESP8266 GPIO. The meter only needs a small amount of amps, so we can drive this directly.

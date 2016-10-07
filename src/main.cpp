@@ -6,6 +6,12 @@
 IPAddress host(192,168,178,1);
 const int httpPort = 49000;
 
+const long MAXVU = 75;
+const long MINVU = 1;
+const long MAXBYTEDN = 4000000;//32 mbit
+const long MAXBYTEUP = 250000;//2 mbit
+
+
 struct sr {
   int sent;
   int receive;
@@ -43,7 +49,7 @@ sr parseData(String xml){
   return parsed;
 }
 
-void getFritzData(){
+sr getFritzData(){
   WiFiClient client;
   if (client.connect(host, httpPort)) {
 
@@ -78,7 +84,7 @@ void getFritzData(){
     }
 
     Serial.println(lines);
-    parseData(lines);
+    return parseData(lines);
   }
   else{
     Serial.println("no connection to fritzbox");
@@ -87,6 +93,7 @@ void getFritzData(){
 
 void setup(void){
   pinMode(LED, OUTPUT);
+  pinMode(VUUP, OUTPUT);
   //digitalWrite(led, 0);
   Serial.begin(115200);
   WiFi.begin(SSID, PWD);
@@ -105,8 +112,9 @@ void setup(void){
 }
 
 void loop() {
-  delay(5000);
-  Serial.println("Start");
-  getFritzData();
-  delay(5000);
+  delay(10);
+  sr data = getFritzData();
+  long dn = map((long)data.receive,0,MAXBYTEDN,MINVU,MAXVU);
+  Serial.println("down: "+String(dn)+" "+String(data.receive));
+  analogWrite(VUDN,(int) dn);
 }

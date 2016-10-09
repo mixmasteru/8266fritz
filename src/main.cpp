@@ -115,6 +115,10 @@ void loop() {
   delay(10);
   sr data = getFritzData();
   long dn = map((long)data.receive,0,MAXBYTEDN,MINVU,MAXVU);
-  Serial.println("down: "+String(dn)+" "+String(data.receive));
+  long up = map((long)data.sent,0,MAXBYTEUP,MINVU,MAXVU);
   analogWrite(VUDN,(int) dn);
+  analogWrite(VUUP,(int) up);
+
+  Serial.println("down: "+String(dn)+" "+String(data.receive));
+  Serial.println("up: "+String(up)+" "+String(data.sent));
 }

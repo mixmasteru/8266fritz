@@ -6,7 +6,7 @@
 IPAddress host(192,168,178,1);
 const int httpPort = 49000;
 
-const long MAXVU = 75;
+const long MAXVU = 80;
 const long MINVU = 1;
 const long MAXBYTEDN = 4000000;//32 mbit
 const long MAXBYTEUP = 250000;//2 mbit
@@ -91,14 +91,30 @@ sr getFritzData(){
   }
 }
 
+void startupVU(){
+
+  for (size_t i = 1; i < MAXVU; i++) {
+    analogWrite(VUDN,i);
+    delay(15);
+  }
+  for (size_t i = MAXVU; i > 0; i--) {
+    analogWrite(VUDN,i);
+    delay(15);
+  }
+
+}
+
 void setup(void){
   pinMode(LED, OUTPUT);
   pinMode(VUUP, OUTPUT);
   //digitalWrite(led, 0);
   Serial.begin(115200);
   WiFi.begin(SSID, PWD);
-  Serial.println("");
+  Serial.println("start vu");
 
+  startupVU();
+
+  Serial.println("start wlan");
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);

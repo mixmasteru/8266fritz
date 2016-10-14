@@ -11,14 +11,16 @@ const long MINVU = 1;
 const long MAXBYTEDN = 4000000;//32 mbit
 const long MAXBYTEUP = 250000;//2 mbit
 
-
+//holds receive/send data
 struct sr {
   int sent;
   int receive;
 };
 
+//returns xml body for fritzbox request
 String getSoapXML(){
-  String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
+  String xml = "";
+  xml += "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
   xml += "<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">";
   xml += "<s:Body>";
   xml += "<u:GetCommonLinkProperties xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\" />";
@@ -28,17 +30,18 @@ String getSoapXML(){
   return xml;
 }
 
+//returns SOAP POST header for fritzbox request
 String getSoapHeader(String url, String host, String soapaction, String clength){
   String header = String("POST ") + url + " HTTP/1.1\r\n" +
                           "Host: " + host + "\r\n" +
                           "Content-Type: text/xml; charset=\"utf-8\"" + "\r\n" +
                           soapaction + "\r\n" +
                           "Content-Length: "+ clength +"\r\n\r\n";
-                          //"Connection: close\r\n\r\n";
 
   return header;
 }
 
+//parse Receive/Send tags form fritzbox xml
 sr parseData(String xml){
   String sent     = xml.substring(xml.indexOf("<NewByteSendRate>")+17,xml.indexOf("</NewByteSendRate>"));
   String receive  = xml.substring(xml.indexOf("<NewByteReceiveRate>")+20,xml.indexOf("</NewByteReceiveRate>"));
@@ -49,6 +52,7 @@ sr parseData(String xml){
   return parsed;
 }
 
+//SOAP xml request to fritzbox and parse Receive/Send data
 sr getFritzData(){
   WiFiClient client;
   if (client.connect(host, httpPort)) {
@@ -91,8 +95,8 @@ sr getFritzData(){
   }
 }
 
+//move VU for startup
 void startupVU(){
-
   for (size_t i = 1; i < MAXVU; i++) {
     analogWrite(VUDN,i);
     delay(15);
